@@ -1091,6 +1091,21 @@ const C3=self.C3;C3.JobSchedulerRuntime=class extends C3.DefendedBase{constructo
 // scripts/shaders.js
 {
 self["C3_Shaders"] = {};
+self["C3_Shaders"]["sepiamask"] = {
+	glsl: "varying mediump vec2 vTex;\nuniform lowp sampler2D samplerFront;\nuniform mediump vec2 srcStart;\nuniform mediump vec2 srcEnd;\nuniform lowp sampler2D samplerBack;\nuniform mediump vec2 destStart;\nuniform mediump vec2 destEnd;\nvoid main(void)\n{\nlowp float fronta = texture2D(samplerFront, vTex).a;\nmediump vec2 tex = (vTex - srcStart) / (srcEnd - srcStart);\nlowp vec4 back = texture2D(samplerBack, mix(destStart, destEnd, tex));\nlowp vec4 sepia = back * mat4( 0.3588, 0.7044, 0.1368, 0.0,\n0.2990, 0.5870, 0.1140, 0.0,\n0.2392, 0.4696, 0.0912, 0.0,\n0.0,\t0.0,\t0.0,\t1.0);\ngl_FragColor = mix(back, vec4(sepia.r, sepia.g, sepia.b, back.a), fronta);\n}",
+	glslWebGL2: "",
+	wgsl: "%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\n%%SAMPLERBACK_BINDING%% var samplerBack : sampler;\n%%TEXTUREBACK_BINDING%% var textureBack : texture_2d<f32>;\n%%FRAGMENTINPUT_STRUCT%%\n%%FRAGMENTOUTPUT_STRUCT%%\nconst sepiaMatrix : mat4x4<f32> = mat4x4<f32>(\nvec4<f32>(0.3588, 0.7044, 0.1368, 0.0),\nvec4<f32>(0.2990, 0.5870, 0.1140, 0.0),\nvec4<f32>(0.2392, 0.4696, 0.0912, 0.0),\nvec4<f32>(0.0,\t0.0,\t0.0,\t1.0)\n);\n@fragment\nfn main(input : FragmentInput) -> FragmentOutput\n{\nvar fronta : f32 = textureSample(textureFront, samplerFront, input.fragUV).a;\nvar back : vec4<f32> = textureSample(textureBack, samplerBack, c3_getBackUV(input.fragPos.xy, textureBack));\nvar sepia : vec4<f32> = back * sepiaMatrix;\nvar output : FragmentOutput;\noutput.color = mix(back, vec4<f32>(sepia.rgb, back.a), fronta);\nreturn output;\n}",
+	blendsBackground: true,
+	usesDepth: false,
+	extendBoxHorizontal: 0,
+	extendBoxVertical: 0,
+	crossSampling: false,
+	mustPreDraw: false,
+	preservesOpaqueness: false,
+	supports3dDirectRendering: false,
+	animated: false,
+	parameters: []
+};
 
 }
 
@@ -1202,6 +1217,11 @@ const C3=self.C3,C3X=self.C3X,IBehaviorInstance=self.IBehaviorInstance,Ease=self
 // scripts/behaviors/Fade/c3runtime/runtime.js
 {
 {const t=self.C3;t.Behaviors.Fade=class extends t.SDKBehaviorBase{constructor(t){super(t)}Release(){super.Release()}}}{const t=self.C3;t.Behaviors.Fade.Type=class extends t.SDKBehaviorTypeBase{constructor(t){super(t)}Release(){super.Release()}OnCreate(){}}}{const t=self.C3,e=self.C3X,i=self.IBehaviorInstance,s=0,a=1,h=2,r=3,n=4;t.Behaviors.Fade.Instance=class extends t.SDKBehaviorInstanceBase{constructor(e,i){super(e),this._fadeInTime=0,this._waitTime=0,this._fadeOutTime=0,this._destroy=!0,this._activeAtStart=!0,this._setMaxOpacity=!1,this._stage=0,this._stageTime=t.New(t.KahanSum),this._maxOpacity=this._inst.GetWorldInfo().GetOpacity()||1,i&&(this._fadeInTime=i[s],this._waitTime=i[a],this._fadeOutTime=i[h],this._destroy=!!i[r],this._activeAtStart=!!i[n],this._stage=this._activeAtStart?0:3),this._activeAtStart&&(0===this._fadeInTime?(this._stage=1,0===this._waitTime&&(this._stage=2)):(this._inst.GetWorldInfo().SetOpacity(0),this._runtime.UpdateRender())),this._StartTicking()}Release(){super.Release()}SaveToJson(){return{"fit":this._fadeInTime,"wt":this._waitTime,"fot":this._fadeOutTime,"d":this._destroy,"s":this._stage,"st":this._stageTime.Get(),"mo":this._maxOpacity}}LoadFromJson(t){this._fadeInTime=t["fit"],this._waitTime=t["wt"],this._fadeOutTime=t["fot"],this._destroy=t["d"],this._stage=t["s"],this._stageTime.Set(t["st"]),this._maxOpacity=t["mo"],3===this._stage?this._StopTicking():this._StartTicking()}Tick(){const e=this._runtime.GetDt(this._inst);this._stageTime.Add(e);const i=this._inst.GetWorldInfo();0===this._stage&&(i.SetOpacity(this._stageTime.Get()/this._fadeInTime*this._maxOpacity),this._runtime.UpdateRender(),i.GetOpacity()>=this._maxOpacity&&(i.SetOpacity(this._maxOpacity),this._stage=1,this._stageTime.Reset(),this.DispatchScriptEvent("fadeinend"),this.Trigger(t.Behaviors.Fade.Cnds.OnFadeInEnd))),1===this._stage&&this._stageTime.Get()>=this._waitTime&&(this._stage=2,this._stageTime.Reset(),this.DispatchScriptEvent("waitend"),this.Trigger(t.Behaviors.Fade.Cnds.OnWaitEnd)),2===this._stage&&(0!==this._fadeOutTime?(i.SetOpacity(this._maxOpacity-this._stageTime.Get()/this._fadeOutTime*this._maxOpacity),this._runtime.UpdateRender(),i.GetOpacity()<=0&&(this._stage=3,this._stageTime.Reset(),this.DispatchScriptEvent("fadeoutend"),this.Trigger(t.Behaviors.Fade.Cnds.OnFadeOutEnd),this._destroy&&this._runtime.DestroyInstance(this._inst))):(this._stage=3,this._stageTime.Reset())),3===this._stage&&this._StopTicking()}_StartFade(){this._activeAtStart||this._setMaxOpacity||(this._maxOpacity=this._inst.GetWorldInfo().GetOpacity()||1,this._setMaxOpacity=!0),3===this._stage&&this.Start()}_RestartFade(){this.Start()}Start(){this._stage=0,this._stageTime.Reset(),0===this._fadeInTime?(this._stage=1,0===this._waitTime&&(this._stage=2)):(this._inst.GetWorldInfo().SetOpacity(0),this._runtime.UpdateRender()),this._StartTicking()}_SetFadeInTime(t){this._fadeInTime=Math.max(t,0)}_GetFadeInTime(){return this._fadeInTime}_SetWaitTime(t){this._waitTime=Math.max(t,0)}_GetWaitTime(){return this._waitTime}_SetFadeOutTime(t){this._fadeOutTime=Math.max(t,0)}_GetFadeOutTime(){return this._fadeOutTime}GetPropertyValueByIndex(t){switch(t){case s:return this._GetFadeInTime();case a:return this._GetWaitTime();case h:return this._GetFadeOutTime();case r:return this._destroy}}SetPropertyValueByIndex(t,e){switch(t){case s:this._SetFadeInTime(e);break;case a:this._SetWaitTime(e);break;case h:this._SetFadeOutTime(e);break;case r:this._destroy=!!e}}GetDebuggerProperties(){const t="behaviors.fade";return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:t+".properties.fade-in-time.name",value:this._GetFadeInTime(),onedit:t=>this._SetFadeInTime(t)},{name:t+".properties.wait-time.name",value:this._GetWaitTime(),onedit:t=>this._SetWaitTime(t)},{name:t+".properties.fade-out-time.name",value:this._GetFadeOutTime(),onedit:t=>this._SetFadeOutTime(t)},{name:t+".debugger.stage",value:[t+".debugger."+["fade-in","wait","fade-out","done"][this._stage]]}]}]}GetScriptInterfaceClass(){return self.IFadeBehaviorInstance}};const _=new WeakMap;self.IFadeBehaviorInstance=class extends i{constructor(){super(),_.set(this,i._GetInitInst().GetSdkInstance())}startFade(){_.get(this)._StartFade()}restartFade(){_.get(this)._RestartFade()}set fadeInTime(t){e.RequireFiniteNumber(t),_.get(this)._SetFadeInTime(t)}get fadeInTime(){return _.get(this)._GetFadeInTime()}set waitTime(t){e.RequireFiniteNumber(t),_.get(this)._SetWaitTime(t)}get waitTime(){return _.get(this)._GetWaitTime()}set fadeOutTime(t){e.RequireFiniteNumber(t),_.get(this)._SetFadeOutTime(t)}get fadeOutTime(){return _.get(this)._GetFadeOutTime()}}}self.C3.Behaviors.Fade.Cnds={OnFadeOutEnd:()=>!0,OnFadeInEnd:()=>!0,OnWaitEnd:()=>!0};self.C3.Behaviors.Fade.Acts={StartFade(){this._StartFade()},RestartFade(){this._RestartFade()},SetFadeInTime(t){this._SetFadeInTime(t)},SetWaitTime(t){this._SetWaitTime(t)},SetFadeOutTime(t){this._SetFadeOutTime(t)}};self.C3.Behaviors.Fade.Exps={FadeInTime(){return this._GetFadeInTime()},WaitTime(){return this._GetWaitTime()},FadeOutTime(){return this._GetFadeOutTime()}};
+}
+
+// scripts/behaviors/Sin/c3runtime/runtime.js
+{
+{const e=self.C3;e.Behaviors.Sin=class extends e.SDKBehaviorBase{constructor(e){super(e)}Release(){super.Release()}}}{const e=self.C3;e.Behaviors.Sin.Type=class extends e.SDKBehaviorTypeBase{constructor(e){super(e)}Release(){super.Release()}OnCreate(){}}}{const e=self.C3,t=self.C3X,i=self.IBehaviorInstance,s=0,a=1,n=2,h=3,_=4,r=5,o=6,l=7,u=8,d=0,m=1,g=2,v=3,c=4,p=5,G=6,b=7,S=8,V=9,w=0,P=1,M=2,I=3,f=4,k=2*Math.PI,W=Math.PI/2,E=3*Math.PI/2,R=[0,1,8,3,4,2,5,6,9,7];e.Behaviors.Sin.Instance=class extends e.SDKBehaviorInstanceBase{constructor(t,i){super(t),this._i=0,this._movement=0,this._wave=0,this._period=0,this._mag=0,this._isEnabled=!0,this._basePeriod=0,this._basePeriodOffset=0,this._baseMag=0,this._periodRandom=0,this._periodOffsetRandom=0,this._magnitudeRandom=0,this._initialValue=0,this._initialValue2=0,this._lastKnownValue=0,this._lastKnownValue2=0,this._ratio=0,i&&(this._movement=R[i[s]],this._wave=i[a],this._periodRandom=this._runtime.Random()*i[h],this._basePeriod=i[n],this._period=i[n],this._period+=this._periodRandom,this._basePeriodOffset=i[_],0!==this._period&&(this._periodOffsetRandom=this._runtime.Random()*i[r],this._i=i[_]/this._period*k,this._i+=this._periodOffsetRandom/this._period*k),this._magnitudeRandom=this._runtime.Random()*i[l],this._baseMag=i[o],this._mag=i[o],this._mag+=this._magnitudeRandom,this._isEnabled=!!i[u]),this._movement===p&&(this._mag=e.toRadians(this._mag)),this.Init(),this._isEnabled&&this._StartTicking()}Release(){super.Release()}SaveToJson(){return{"i":this._i,"e":this._isEnabled,"mv":this._movement,"w":this._wave,"p":this._period,"mag":this._mag,"iv":this._initialValue,"iv2":this._initialValue2,"r":this._ratio,"lkv":this._lastKnownValue,"lkv2":this._lastKnownValue2}}LoadFromJson(e){this._i=e["i"],this._SetEnabled(e["e"]),this._movement=e["mv"],this._wave=e["w"],this._period=e["p"],this._mag=e["mag"],this._initialValue=e["iv"],this._initialValue2=e["iv2"],this._ratio=e["r"],this._lastKnownValue=e["lkv"],this._lastKnownValue2=e["lkv2"]}Init(){const e=this._inst.GetWorldInfo();switch(this._movement){case d:this._initialValue=e.GetX();break;case m:this._initialValue=e.GetY();break;case g:this._initialValue=e.GetWidth(),this._ratio=e.GetHeight()/e.GetWidth();break;case v:this._initialValue=e.GetWidth();break;case c:this._initialValue=e.GetHeight();break;case p:this._initialValue=e.GetAngle();break;case G:this._initialValue=e.GetOpacity();break;case b:this._initialValue=0;break;case S:this._initialValue=e.GetX(),this._initialValue2=e.GetY();break;case V:this._initialValue=e.GetZElevation()}this._lastKnownValue=this._initialValue,this._lastKnownValue2=this._initialValue2}WaveFunc(e){switch(e%=k,this._wave){case w:return Math.sin(e);case P:return e<=W?e/W:e<=E?1-2*(e-W)/Math.PI:(e-E)/W-1;case M:return 2*e/k-1;case I:return-2*e/k+1;case f:return e<Math.PI?-1:1}return 0}Tick(){const e=this._runtime.GetDt(this._inst);this._isEnabled&&0!==e&&(0===this._period?this._i=0:this._i=(this._i+e/this._period*k)%k,this._UpdateFromPhase())}_UpdateFromPhase(){const t=this._inst.GetWorldInfo();switch(this._movement){case d:t.GetX()!==this._lastKnownValue&&(this._initialValue+=t.GetX()-this._lastKnownValue),t.SetX(this._initialValue+this.WaveFunc(this._i)*this._mag),this._lastKnownValue=t.GetX();break;case m:t.GetY()!==this._lastKnownValue&&(this._initialValue+=t.GetY()-this._lastKnownValue),t.SetY(this._initialValue+this.WaveFunc(this._i)*this._mag),this._lastKnownValue=t.GetY();break;case g:t.SetWidth(this._initialValue+this.WaveFunc(this._i)*this._mag),t.SetHeight(t.GetWidth()*this._ratio);break;case v:t.SetWidth(this._initialValue+this.WaveFunc(this._i)*this._mag);break;case c:t.SetHeight(this._initialValue+this.WaveFunc(this._i)*this._mag);break;case p:t.GetAngle()!==this._lastKnownValue&&(this._initialValue=e.clampAngle(this._initialValue+(t.GetAngle()-this._lastKnownValue))),t.SetAngle(this._initialValue+this.WaveFunc(this._i)*this._mag),this._lastKnownValue=t.GetAngle();break;case G:t.SetOpacity(this._initialValue+this.WaveFunc(this._i)*this._mag/100);break;case S:t.GetX()!==this._lastKnownValue&&(this._initialValue+=t.GetX()-this._lastKnownValue),t.GetY()!==this._lastKnownValue2&&(this._initialValue2+=t.GetY()-this._lastKnownValue2),t.SetX(this._initialValue+Math.cos(t.GetAngle())*this.WaveFunc(this._i)*this._mag),t.SetY(this._initialValue2+Math.sin(t.GetAngle())*this.WaveFunc(this._i)*this._mag),this._lastKnownValue=t.GetX(),this._lastKnownValue2=t.GetY();break;case V:t.SetZElevation(this._initialValue+this.WaveFunc(this._i)*this._mag)}t.SetBboxChanged()}_OnSpriteFrameChanged(e,t){}_SetPeriod(e){this._period=e}_GetPeriod(){return this._period}_SetMagnitude(e){this._mag=e}_SetMagnitude_ConvertAngle(t){5===this._movement&&(t=e.toRadians(t)),this._SetMagnitude(t)}_GetMagnitude(){return this._mag}_GetMagnitude_ConvertAngle(){let t=this._GetMagnitude();return 5===this._movement&&(t=e.toDegrees(t)),t}_SetMovement(t){5===this._movement&&5!==t&&(this._mag=e.toDegrees(this._mag)),this._movement=t,this.Init()}_GetMovement(){return this._movement}_SetWave(e){this._wave=e}_GetWave(){return this._wave}_SetPhase(t){this._i=e.clamp(t,0,2*Math.PI),this._UpdateFromPhase()}_GetPhase(){return this._i}_SetEnabled(e){this._isEnabled=!!e,this._isEnabled?this._StartTicking():this._StopTicking()}_IsEnabled(){return this._isEnabled}GetPropertyValueByIndex(e){switch(e){case s:return this._movement;case a:return this._wave;case n:return this._basePeriod;case o:return this._baseMag;case u:return this._isEnabled}}SetPropertyValueByIndex(t,i){switch(t){case s:this._movement=R[i],this.Init();break;case a:this._wave=i;break;case n:this._basePeriod=i,this._period=this._basePeriod+this._periodRandom,this._isEnabled||(0!==this._period?(this._i=this._basePeriodOffset/this._period*k,this._i+=this._periodOffsetRandom/this._period*k):this._i=0);break;case o:this._baseMag=i,this._mag=this._baseMag+this._magnitudeRandom,this._movement===p&&(this._mag=e.toRadians(this._mag));break;case u:this._isEnabled=!!i}}GetDebuggerProperties(){const e="behaviors.sin";return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:e+".properties.enabled.name",value:this._IsEnabled(),onedit:e=>this._SetEnabled(e)},{name:e+".properties.period.name",value:this._GetPeriod(),onedit:e=>this._SetPeriod(e)},{name:e+".properties.magnitude.name",value:this._GetMagnitude_ConvertAngle(),onedit:e=>this._SetMagnitude_ConvertAngle(e)},{name:e+".debugger.value",value:this.WaveFunc(this._GetPhase())*this._GetMagnitude_ConvertAngle()}]}]}GetScriptInterfaceClass(){return self.ISineBehaviorInstance}};const C=new WeakMap,K=["horizontal","vertical","size","width","height","angle","opacity","value-only","forwards-backwards","z-elevation"],F=["sine","triangle","sawtooth","reverse-sawtooth","square"];self.ISineBehaviorInstance=class extends i{constructor(){super(),C.set(this,i._GetInitInst().GetSdkInstance())}set period(e){t.RequireFiniteNumber(e),C.get(this)._SetPeriod(e)}get period(){return C.get(this)._GetPeriod()}set magnitude(e){t.RequireFiniteNumber(e),C.get(this)._SetMagnitude(e)}get magnitude(){return C.get(this)._GetMagnitude()}set phase(e){C.get(this)._SetPhase(e)}get phase(){return C.get(this)._GetPhase()}set movement(e){t.RequireString(e);const i=K.indexOf(e);if(-1===i)throw new Error("invalid movement");C.get(this)._SetMovement(i)}get movement(){return K[C.get(this)._GetMovement()]}set wave(e){t.RequireString(e);const i=F.indexOf(e);if(-1===i)throw new Error("invalid wave");C.get(this)._SetWave(i)}get wave(){return F[C.get(this)._GetWave()]}get value(){const e=C.get(this);return e.WaveFunc(e._GetPhase())*e._GetMagnitude()}updateInitialState(){C.get(this).Init()}set isEnabled(e){C.get(this)._SetEnabled(!!e)}get isEnabled(){return C.get(this)._IsEnabled()}}}{const e=self.C3;e.Behaviors.Sin.Cnds={IsEnabled(){return this._IsEnabled()},CompareMovement(e){return this._GetMovement()===e},ComparePeriod(t,i){return e.compare(this._GetPeriod(),t,i)},CompareMagnitude(t,i){return e.compare(this._GetMagnitude_ConvertAngle(),t,i)},CompareWave(e){return this._GetWave()===e}}}self.C3.Behaviors.Sin.Acts={SetEnabled(e){this._SetEnabled(0!==e)},SetPeriod(e){this._SetPeriod(e)},SetMagnitude(e){this._SetMagnitude_ConvertAngle(e)},SetMovement(e){this._SetMovement(e)},SetWave(e){this._wave=e},SetPhase(e){const t=2*Math.PI;this._SetPhase(e*t%t)},UpdateInitialState(){this.Init()}};self.C3.Behaviors.Sin.Exps={CyclePosition(){return this._GetPhase()/(2*Math.PI)},Period(){return this._GetPeriod()},Magnitude(){return this._GetMagnitude_ConvertAngle()},Value(){return this.WaveFunc(this._GetPhase())*this._GetMagnitude_ConvertAngle()}};
 }
 
 // scripts/expTable.js
@@ -1324,10 +1344,28 @@ self.C3_ExpressionFuncs = [
 		() => 100,
 		() => 0.3,
 		() => "https://testsoftware.in/beauty-m911/landing-page/",
+		() => 1080,
+		() => 1920,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const n1 = p._GetNode(1);
+			const n2 = p._GetNode(2);
+			return () => f0((n1.ExpObject() + 2), n2.ExpObject());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => ((n0.ExpObject() / n1.ExpObject()) * 100);
+		},
+		() => 99,
 		() => 0.55,
 		() => "main-music",
 		() => 0.92,
 		() => 40,
+		() => "border",
+		() => "3px solid  transparent",
+		() => "background",
+		() => "transparent",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => (and("SKIN HEALTH - ", Math.ceil(((v0.GetValue() * 100) / 18))) + " %");
@@ -1347,24 +1385,50 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const v0 = p._GetNode(0).GetVar();
-			return () => ((v0.GetValue()) < (8.4) ? 1 : 0);
+			return () => Math.ceil(((v0.GetValue() * 100) / 18));
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			return () => n0.ExpObject();
+			return () => n0.ExpObject("player_id");
+		},
+		() => "Content-Type",
+		() => "application/json",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => ((and("Sending score: ", v0.GetValue()) + " email: ") + v1.GetValue());
+		},
+		() => "save",
+		() => "https://ubuntu.tail2124eb.ts.net/g1/save-score",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => (and((((((("{" + "\"player_id\"") + ":") + v0.GetValue()) + ",") + "\"score\"") + ":"), v1.GetValue()) + "}");
+		},
+		() => "PATCH",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => ("Data" + f0());
+		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((v0.GetValue()) < (8.4) ? 1 : 0);
 		},
 		() => 8.5,
 		() => 10,
 		() => "5% CONSULTATION",
+		() => 5,
 		() => 11,
 		() => 13,
 		() => "7.5% CONSULTATION",
+		() => 7.5,
 		() => 14,
 		() => 16,
 		() => "10% CONSULTATION",
 		() => 17,
 		() => 18,
 		() => "15% CONSULTATION",
+		() => 15,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -1378,50 +1442,22 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => n0.ExpInstVar();
 		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => Math.ceil(((v0.GetValue() * 100) / 18));
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("player_id");
-		},
-		() => "Content-Type",
-		() => "application/json",
-		() => "save-score",
-		() => "https://ubuntu.tail2124eb.ts.net/g1/save-score",
+		() => "submit-associate",
+		() => "https://ubuntu.tail2124eb.ts.net/g1/submit-associate",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const v1 = p._GetNode(1).GetVar();
 			const v2 = p._GetNode(2).GetVar();
-			const v3 = p._GetNode(3).GetVar();
-			return () => (and((and((and((("{\"player_id\":\"" + v0.GetValue()) + "\",\"score\":"), v1.GetValue()) + ",\"rating\":"), v2.GetValue()) + ",\"discount\":"), v3.GetValue()) + "}");
-		},
-		() => "PATCH",
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			return () => ((and("Sending score: ", v0.GetValue()) + " email: ") + v1.GetValue());
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			const v2 = p._GetNode(2).GetVar();
-			const v3 = p._GetNode(3).GetVar();
-			return () => and((and((((and("Sending score: ", v0.GetValue()) + " | email: ") + v1.GetValue()) + " | rating: "), v2.GetValue()) + " | discount: "), v3.GetValue());
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => ("Data" + f0());
+			return () => (and((and((("{\"player_id\":\"" + v0.GetValue()) + "\",\"rating\":"), v1.GetValue()) + ",\"discount\":"), v2.GetValue()) + "}");
 		},
 		() => "Full",
 		() => "Empty",
-		() => "border",
 		() => "3px solid  orange",
-		() => "3px solid  transparent",
-		() => "background",
-		() => "transparent",
 		() => "main-sound",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject();
+		},
 		() => "submit_user",
 		() => "https://ubuntu.tail2124eb.ts.net/g1/submit",
 		p => {
@@ -1431,6 +1467,12 @@ self.C3_ExpressionFuncs = [
 			return () => (and((((("{\"name\":\"" + v0.GetValue()) + "\",\"email\":\"") + v1.GetValue()) + "\",\"phone\":\""), v2.GetValue()) + "\"}");
 		},
 		() => "POST",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			const v2 = p._GetNode(2).GetVar();
+			return () => and((((("Name: " + v0.GetValue()) + " | email: ") + v1.GetValue()) + " | Phone number: "), v2.GetValue());
+		},
 		() => "submit",
 		p => {
 			const n0 = p._GetNode(0);
@@ -1522,7 +1564,6 @@ self.C3_ExpressionFuncs = [
 		() => 860,
 		() => 83,
 		() => 45,
-		() => 5,
 		() => 736,
 		p => {
 			const v0 = p._GetNode(0).GetVar();

@@ -1500,12 +1500,8 @@ self.C3_ExpressionFuncs = [
 			const n1 = p._GetNode(1);
 			return () => f0(n1.ExpObject(), "[^0-9]", "", "");
 		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			return () => f0(n1.ExpObject(), "@");
-		},
-		() => -1,
+		() => "^[\\w.-]+@[\\w.-]+\\.\\w+$",
+		() => "i",
 		() => "BEGIN GAME",
 		() => -10,
 		() => 6,

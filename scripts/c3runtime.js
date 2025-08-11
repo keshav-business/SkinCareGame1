@@ -545,7 +545,7 @@ const C3=self.C3,C3X=self.C3X;self.ILoopingConditionContext=class{#e;#t;#o;#n;#s
 
 // interfaces/gfx/IRenderer.js
 {
-const C3=self.C3,C3X=self.C3X;let renderer=null,runtime=null;function IsStaticTextureDataType(e){return e instanceof ImageBitmap||"undefined"!=typeof HTMLImageElement&&e instanceof HTMLImageElement||"undefined"!=typeof HTMLCanvasElement&&e instanceof HTMLCanvasElement||"undefined"!=typeof OffscreenCanvas&&e instanceof OffscreenCanvas}const CULL_MODE_ARR=["none","back","front"],FRONT_FACE_WINDING_ARR=["cw","ccw"];self.IRenderer=class{constructor(e,r){runtime=e,renderer=r}setAlphaBlendMode(){renderer.SetAlphaBlend()}setBlendMode(e){renderer.SetNamedBlendMode(e)}setColorFillMode(){renderer.SetColorFillMode()}setTextureFillMode(){renderer.SetTextureFillMode()}setSmoothLineFillMode(){renderer.SetSmoothLineFillMode()}setColor(e){renderer.SetColorRgba(e[0],e[1],e[2],e[3])}setColorRgba(e,r,n,t){renderer.SetColorRgba(e,r,n,t)}resetColor(){renderer.ResetColor()}setOpacity(e){renderer.SetOpacity(e)}setCurrentZ(e){renderer.SetCurrentZ(e)}getCurrentZ(){renderer.GetCurrentZ()}setCullFaceMode(e){const r=CULL_MODE_ARR.indexOf(e);if(-1===r)throw new Error("invalid cull mode");renderer.SetCullFaceMode(r)}getCullFaceMode(){return CULL_MODE_ARR[renderer.GetCullFaceMode()]}setFrontFaceWinding(e){const r=FRONT_FACE_WINDING_ARR.indexOf(e);if(-1===r)throw new Error("invalid front face winding");renderer.SetFrontFaceWinding(r)}getFrontFaceWinding(){return renderer.GetFrontFaceWinding()}rect(e){renderer.Rect2(e.left,e.top,e.right,e.bottom)}rect2(e,r,n,t){renderer.Rect2(e,r,n,t)}quad(e){renderer.Quad(C3.Quad.fromDOMQuad(e))}quad2(e,r,n,t,a,d,i,o){renderer.Quad2(e,r,n,t,a,d,i,o)}quad3(e,r){renderer.Quad3(C3.Quad.fromDOMQuad(e),C3.Rect.fromDOMRect(r))}quad4(e,r){renderer.Quad4(C3.Quad.fromDOMQuad(e),C3.Quad.fromDOMQuad(r))}quad5(e,r,n){renderer.Quad5(C3.Quad.fromDOMQuad(e),C3.Quad.fromDOMQuad(r),n)}quad3D(e,r,n,t,a,d,i,o,u,l,c,s,p){renderer.Quad3D(e,r,n,t,a,d,i,o,u,l,c,s,C3.Rect.fromDOMRect(p))}quad3D2(e,r,n,t,a,d,i,o,u,l,c,s,p){renderer.Quad3D2(e,r,n,t,a,d,i,o,u,l,c,s,C3.Quad.fromDOMQuad(p))}quad3D3(e,r,n,t,a,d,i,o,u,l,c,s,p,f){renderer.Quad3D3(e,r,n,t,a,d,i,o,u,l,c,s,C3.Quad.fromDOMQuad(p),f)}drawMesh(e,r,n,t){renderer.DrawMesh(e,r,n,t)}convexPoly(e){renderer.ConvexPoly(e)}line(e,r,n,t){renderer.Line(e,r,n,t)}texturedLine(e,r,n,t,a,d){renderer.TexturedLine(e,r,n,t,a,d)}lineRect(e,r,n,t){renderer.LineRect(e,r,n,t)}lineRect2(e){renderer.LineRect2(C3.Rect.fromDOMRect(e))}lineQuad(e){renderer.LineQuad(C3.Quad.fromDOMQuad(e))}pushLineWidth(e){renderer.PushLineWidth(e)}popLineWidth(){renderer.PopLineWidth()}pushLineCap(e){renderer.PushLineCap(e)}popLineCap(){renderer.PopLineCap()}setTexture(e){C3X.RequireOptionalInstanceOf(e,self.ITexture);const r=e?runtime._UnwrapScriptInterface(e):null;renderer.SetTexture(r)}loadTextureForImageInfo(e,r){const n=self.IImageInfo._Unwrap(e);if(!n)throw new Error("invalid IImageInfo");return n.LoadStaticTexture(renderer,{wrapX:r?.wrapX??"clamp-to-edge",wrapY:r?.wrapY??"clamp-to-edge",sampling:r?.sampling??"trilinear",mipMap:r?.mipMap??!0})}releaseTextureForImageInfo(e){const r=self.IImageInfo._Unwrap(e);if(!r)throw new Error("invalid IImageInfo");r.ReleaseTexture()}getTextureForImageInfo(e){const r=self.IImageInfo._Unwrap(e);if(!r)throw new Error("invalid IImageInfo");const n=r.GetTexture();return self.ITexture.GetInterface(runtime,n)}createStaticTexture(e,r){if(!IsStaticTextureDataType(e))throw new TypeError("invalid texture data");const n=renderer.CreateStaticTexture(e,{wrapX:r?.wrapX??"clamp-to-edge",wrapY:r?.wrapY??"clamp-to-edge",sampling:r?.sampling??"trilinear",mipMap:r?.mipMap??!0});return self.ITexture.GetInterface(runtime,n)}createDynamicTexture(e,r,n){C3X.RequireFiniteNumber(e),C3X.RequireFiniteNumber(r);const t=renderer.CreateDynamicTexture(e,r,{wrapX:n?.wrapX??"clamp-to-edge",wrapY:n?.wrapY??"clamp-to-edge",sampling:n?.sampling??"trilinear",mipMap:n?.mipMap??!0});return self.ITexture.GetInterface(runtime,t)}updateTexture(e,r,n){C3X.RequireInstanceOf(r,self.ITexture);const t=runtime._UnwrapScriptInterface(r);renderer.UpdateTexture(e,t,{premultiplyAlpha:n?.premultiplyAlpha??!0})}deleteTexture(e){C3X.RequireInstanceOf(e,self.ITexture);const r=runtime._UnwrapScriptInterface(e);renderer.DeleteTexture(r)}createRendererText(){const e=renderer.CreateRendererText();return new self.IRendererText(runtime,e)}setDeviceTransform(){runtime.GetCanvasManager().SetDeviceTransform(renderer)}setLayerTransform(e){C3X.RequireInstanceOf(e,globalThis.ILayer);runtime._UnwrapScriptInterface(e)._SetTransform(renderer)}};
+const C3=self.C3,C3X=self.C3X;let renderer=null,runtime=null;function IsStaticTextureDataType(e){return e instanceof ImageBitmap||"undefined"!=typeof HTMLImageElement&&e instanceof HTMLImageElement||"undefined"!=typeof HTMLCanvasElement&&e instanceof HTMLCanvasElement||"undefined"!=typeof OffscreenCanvas&&e instanceof OffscreenCanvas}const CULL_MODE_ARR=["none","back","front"],FRONT_FACE_WINDING_ARR=["cw","ccw"];self.IRenderer=class{constructor(e,r){runtime=e,renderer=r}setAlphaBlendMode(){renderer.SetAlphaBlend()}setBlendMode(e){renderer.SetNamedBlendMode(e)}setColorFillMode(){renderer.SetColorFillMode()}setTextureFillMode(){renderer.SetTextureFillMode()}setSmoothLineFillMode(){renderer.SetSmoothLineFillMode()}setColor(e){renderer.SetColorRgba(e[0],e[1],e[2],e[3])}setColorRgba(e,r,n,t){renderer.SetColorRgba(e,r,n,t)}resetColor(){renderer.ResetColor()}setOpacity(e){renderer.SetOpacity(e)}setCurrentZ(e){renderer.SetCurrentZ(e)}getCurrentZ(){return renderer.GetCurrentZ()}setCullFaceMode(e){const r=CULL_MODE_ARR.indexOf(e);if(-1===r)throw new Error("invalid cull mode");renderer.SetCullFaceMode(r)}getCullFaceMode(){return CULL_MODE_ARR[renderer.GetCullFaceMode()]}setFrontFaceWinding(e){const r=FRONT_FACE_WINDING_ARR.indexOf(e);if(-1===r)throw new Error("invalid front face winding");renderer.SetFrontFaceWinding(r)}getFrontFaceWinding(){return renderer.GetFrontFaceWinding()}rect(e){renderer.Rect2(e.left,e.top,e.right,e.bottom)}rect2(e,r,n,t){renderer.Rect2(e,r,n,t)}quad(e){renderer.Quad(C3.Quad.fromDOMQuad(e))}quad2(e,r,n,t,a,d,i,o){renderer.Quad2(e,r,n,t,a,d,i,o)}quad3(e,r){renderer.Quad3(C3.Quad.fromDOMQuad(e),C3.Rect.fromDOMRect(r))}quad4(e,r){renderer.Quad4(C3.Quad.fromDOMQuad(e),C3.Quad.fromDOMQuad(r))}quad5(e,r,n){renderer.Quad5(C3.Quad.fromDOMQuad(e),C3.Quad.fromDOMQuad(r),n)}quad3D(e,r,n,t,a,d,i,o,u,l,c,s,p){renderer.Quad3D(e,r,n,t,a,d,i,o,u,l,c,s,C3.Rect.fromDOMRect(p))}quad3D2(e,r,n,t,a,d,i,o,u,l,c,s,p){renderer.Quad3D2(e,r,n,t,a,d,i,o,u,l,c,s,C3.Quad.fromDOMQuad(p))}quad3D3(e,r,n,t,a,d,i,o,u,l,c,s,p,f){renderer.Quad3D3(e,r,n,t,a,d,i,o,u,l,c,s,C3.Quad.fromDOMQuad(p),f)}drawMesh(e,r,n,t){renderer.DrawMesh(e,r,n,t)}convexPoly(e){renderer.ConvexPoly(e)}line(e,r,n,t){renderer.Line(e,r,n,t)}texturedLine(e,r,n,t,a,d){renderer.TexturedLine(e,r,n,t,a,d)}lineRect(e,r,n,t){renderer.LineRect(e,r,n,t)}lineRect2(e){renderer.LineRect2(C3.Rect.fromDOMRect(e))}lineQuad(e){renderer.LineQuad(C3.Quad.fromDOMQuad(e))}pushLineWidth(e){renderer.PushLineWidth(e)}popLineWidth(){renderer.PopLineWidth()}pushLineCap(e){renderer.PushLineCap(e)}popLineCap(){renderer.PopLineCap()}setTexture(e){C3X.RequireOptionalInstanceOf(e,self.ITexture);const r=e?runtime._UnwrapScriptInterface(e):null;renderer.SetTexture(r)}loadTextureForImageInfo(e,r){const n=self.IImageInfo._Unwrap(e);if(!n)throw new Error("invalid IImageInfo");return n.LoadStaticTexture(renderer,{wrapX:r?.wrapX??"clamp-to-edge",wrapY:r?.wrapY??"clamp-to-edge",sampling:r?.sampling??"trilinear",mipMap:r?.mipMap??!0})}releaseTextureForImageInfo(e){const r=self.IImageInfo._Unwrap(e);if(!r)throw new Error("invalid IImageInfo");r.ReleaseTexture()}getTextureForImageInfo(e){const r=self.IImageInfo._Unwrap(e);if(!r)throw new Error("invalid IImageInfo");const n=r.GetTexture();return self.ITexture.GetInterface(runtime,n)}createStaticTexture(e,r){if(!IsStaticTextureDataType(e))throw new TypeError("invalid texture data");const n=renderer.CreateStaticTexture(e,{wrapX:r?.wrapX??"clamp-to-edge",wrapY:r?.wrapY??"clamp-to-edge",sampling:r?.sampling??"trilinear",mipMap:r?.mipMap??!0});return self.ITexture.GetInterface(runtime,n)}createDynamicTexture(e,r,n){C3X.RequireFiniteNumber(e),C3X.RequireFiniteNumber(r);const t=renderer.CreateDynamicTexture(e,r,{wrapX:n?.wrapX??"clamp-to-edge",wrapY:n?.wrapY??"clamp-to-edge",sampling:n?.sampling??"trilinear",mipMap:n?.mipMap??!0});return self.ITexture.GetInterface(runtime,t)}updateTexture(e,r,n){C3X.RequireInstanceOf(r,self.ITexture);const t=runtime._UnwrapScriptInterface(r);renderer.UpdateTexture(e,t,{premultiplyAlpha:n?.premultiplyAlpha??!0})}deleteTexture(e){C3X.RequireInstanceOf(e,self.ITexture);const r=runtime._UnwrapScriptInterface(e);renderer.DeleteTexture(r)}createRendererText(){const e=renderer.CreateRendererText();return new self.IRendererText(runtime,e)}setDeviceTransform(){runtime.GetCanvasManager().SetDeviceTransform(renderer)}setLayerTransform(e){C3X.RequireInstanceOf(e,globalThis.ILayer);runtime._UnwrapScriptInterface(e)._SetTransform(renderer)}};
 }
 
 // interfaces/gfx/ITexture.js
@@ -1388,29 +1388,6 @@ self.C3_ExpressionFuncs = [
 			return () => Math.ceil(((v0.GetValue() * 100) / 18));
 		},
 		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("player_id");
-		},
-		() => "Content-Type",
-		() => "application/json",
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			return () => ((and("Sending score: ", v0.GetValue()) + " email: ") + v1.GetValue());
-		},
-		() => "save",
-		() => "https://ubikback-production.up.railway.app/game1/save_score",
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const v1 = p._GetNode(1).GetVar();
-			return () => (and((((((("{" + "\"player_id\"") + ":") + v0.GetValue()) + ",") + "\"score\"") + ":"), v1.GetValue()) + "}");
-		},
-		() => "PATCH",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => ("Data" + f0());
-		},
-		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((v0.GetValue()) < (8.4) ? 1 : 0);
 		},
@@ -1437,6 +1414,35 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const n0 = p._GetNode(0);
 			return () => ("0" + n0.ExpObject());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("player_id");
+		},
+		() => "Content-Type",
+		() => "application/json",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => ((and("Sending score: ", v0.GetValue()) + " email: ") + v1.GetValue());
+		},
+		() => "save",
+		() => "https://ubikback-production.up.railway.app/game1/save_score",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			const v2 = p._GetNode(2).GetVar();
+			return () => (and((and((((((("{" + "\"player_id\"") + ":") + v0.GetValue()) + ",") + "\"score\"") + ":"), v1.GetValue()) + ",\"discount\":"), v2.GetValue()) + "}");
+		},
+		() => "PATCH",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const v1 = p._GetNode(1).GetVar();
+			return () => and((and("Sending score: ", v0.GetValue()) + " discount: "), v1.GetValue());
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => ("Data" + f0());
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -1500,7 +1506,7 @@ self.C3_ExpressionFuncs = [
 			const n1 = p._GetNode(1);
 			return () => f0(n1.ExpObject(), "[^0-9]", "", "");
 		},
-		() => "^[\\w.-]+@[\\w.-]+\\.\\w+$",
+		() => "^[a-zA-Z0-9._%+-]+@(gmail\\.com|metaverse911\\.rs|business\\.org|yahoo\\.com|ubiksolutionspvtltd\\.com|xs-worldwide\\.com|xsproductions\\.com|outlook\\.com|ethicare\\.in|123mail\\.org|126\\.com|139\\.com|150mail\\.com|150ml\\.com|163\\.com|16mail\\.com|2-mail\\.com|420blaze\\.it|4email\\.net|50mail\\.com|8chan\\.co|aaathats3as\\.com|airmail\\.cc|airpost\\.net|airsi\\.de|allmail\\.net|antichef\\.com|antichef\\.net|bestmail\\.us|bluewin\\.ch|c2\\.hu|cluemail\\.com|cocaine\\.ninja|cock\\.email|cock\\.li|cock\\.lu|cumallover\\.me|dfgh\\.net|dicksinhisan\\.us|dicksinmyan\\.us|elitemail\\.org|emailcorner\\.net|emailengine\\.net|emailengine\\.org|emailgroups\\.net|emailplus\\.org|emailuser\\.net|eml\\.cc|f-m\\.fm|fast-email\\.com|fast-mail\\.org|fastem\\.com|fastemail\\.us|fastemailer\\.com|fastest\\.cc|fastimap\\.com|fastmail\\.cn|fastmail\\.co\\.uk|fastmail\\.com|fastmail\\.com\\.au|fastmail\\.es|fastmail\\.fm|fastmail\\.im|fastmail\\.in|fastmail\\.jp|fastmail\\.mx|fastmail\\.net|fastmail\\.nl|fastmail\\.se|fastmail\\.to|fastmail\\.tw|fastmail\\.uk|fastmail\\.us|fastmailbox\\.net|fastmessaging\\.com|fea\\.st|firemail\\.cc|fmail\\.co\\.uk|fmailbox\\.com|fmgirl\\.com|fmguy\\.com|freemail\\.hu|ftml\\.net|getbackinthe\\.kitchen|gmx\\.com|gmx\\.us|goat\\.si|h-mail\\.us|hailmail\\.net|hitler\\.rocks|horsefucker\\.org|hush\\.ai|hush\\.com|hushmail\\.com|hushmail\\.me|imap-mail\\.com|imap\\.cc|imapmail\\.org|inoutbox\\.com|internet-e-mail\\.com|internet-mail\\.org|internetemails\\.net|internetmailing\\.net|jetemail\\.net|justemail\\.net|kakao\\.com|kennedy808\\.com|letterboxes\\.org|liamekaens\\.com|mail-central\\.com|mail-page\\.com|mail2world\\.com|mailandftp\\.com|mailas\\.com|mailbolt\\.com|mailc\\.net|mailcan\\.com|mailforce\\.net|mailftp\\.com|mailhaven\\.com|mailingaddress\\.org|mailite\\.com|mailmight\\.com|mailnew\\.com|mailsent\\.net|mailservice\\.ms|mailup\\.net|mailworks\\.org|memeware\\.net|ml1\\.net|mm\\.st|mozmail\\.com|myfastmail\\.com|mymacmail\\.com|naver\\.com|neverbox\\.com|nigge\\.rs|nospammail\\.net|nus\\.edu\\.sg|onet\\.pl|ownmail\\.net|petml\\.com|postinbox\\.com|postpro\\.net|proinbox\\.com|promessage\\.com|qq\\.com|realemail\\.net|reallyfast\\.biz|reallyfast\\.info|recursor\\.net|redchan\\.it|ruffrey\\.com|rushpost\\.com|safe-mail\\.net|sent\\.as|sent\\.at|sent\\.com|shitposting\\.agency|shitware\\.nl|sibmail\\.com|sneakemail\\.com|snkmail\\.com|snkml\\.com|spamcannon\\.com|spamcannon\\.net|spamgourmet\\.com|spamgourmet\\.net|spamgourmet\\.org|speedpost\\.net|speedymail\\.org|ssl-mail\\.com|swift-mail\\.com|tfwno\\.gf|the-fastest\\.net|the-quickest\\.com|theinternetemail\\.com|tweakly\\.net|ubicloud\\.com|veryfast\\.biz|veryspeedy\\.net|vfemail\\.net|waifu\\.club|warpmail\\.net|xmail\\.com|xoxy\\.net|xsmail\\.com|xwaretech\\.com|xwaretech\\.info|xwaretech\\.net|yahoo\\.com\\.ph|yahoo\\.com\\.vn|yeah\\.net|yepmail\\.net|your-mail\\.com\n)$",
 		() => "i",
 		() => "BEGIN GAME",
 		() => -10,

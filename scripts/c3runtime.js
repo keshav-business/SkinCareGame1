@@ -1391,30 +1391,6 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((v0.GetValue()) < (8.4) ? 1 : 0);
 		},
-		() => 8.5,
-		() => 10,
-		() => "5% CONSULTATION",
-		() => 5,
-		() => 11,
-		() => 13,
-		() => "7.5% CONSULTATION",
-		() => 7.5,
-		() => 14,
-		() => 16,
-		() => "10% CONSULTATION",
-		() => 17,
-		() => 18,
-		() => "15% CONSULTATION",
-		() => 15,
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => f0(f1());
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => ("0" + n0.ExpObject());
-		},
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject("player_id");
@@ -1443,6 +1419,30 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => ("Data" + f0());
+		},
+		() => 8.5,
+		() => 10,
+		() => "5% CONSULTATION",
+		() => 5,
+		() => 11,
+		() => 13,
+		() => "7.5% CONSULTATION",
+		() => 7.5,
+		() => 14,
+		() => 16,
+		() => "10% CONSULTATION",
+		() => 17,
+		() => 18,
+		() => "15% CONSULTATION",
+		() => 15,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => f0(f1());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => ("0" + n0.ExpObject());
 		},
 		p => {
 			const n0 = p._GetNode(0);
